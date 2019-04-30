@@ -48,9 +48,19 @@ public class Main extends Application {
 			ObservableList<String> options = FXCollections.observableArrayList("Math", "Computer Science", "Statistics",
 					"Phsics", "History", "English");
 			final ComboBox comboBox = new ComboBox(options);
+<<<<<<< HEAD
 			VBox topicSelection = new VBox();
 
 			textField.getChildren().addAll(numQuestionsPrompt, numQuestions);
+=======
+			
+			
+			VBox selection = new VBox();
+			
+			
+			//good work
+			textField.getChildren().addAll(numQuestionsPrompt,numQuestions);
+>>>>>>> 0f02b65d4f349b44d666494f38ce61a25e296daf
 			buttons.getChildren().addAll(load, add, save, generate);
 			topicSelection.getChildren().addAll(questions, topicPrompt, comboBox);
 
