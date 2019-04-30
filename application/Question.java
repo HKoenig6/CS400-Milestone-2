@@ -21,26 +21,26 @@ public class Question {
 	}
 	
 	String getQuestion() {
-		return question; //TODO
+		return question;
 	}
 	
 	List<Choice> getChoices() {
-		return choices; //TODO
+		return choices; 
 	}
 	
 	String getAnswer() {
-		return answer; //TODO
+		return answer;
 	}
 	
 	String getMetadata() {
-		return metadata; //TODO
+		return metadata;
 	}
 	
 	String getTopic() {
-		return topic; //TODO
+		return topic;
 	}
 	
 	String getImage() {
-		return image; //TODO
+		return image;
 	}
 }

@@ -1,6 +1,8 @@
 package application;
 
 	
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +19,14 @@ import javafx.scene.layout.VBox;
 
 
 public class Main extends Application {
+	
+	QuestionDatabase questionDB;
+	List<Question> questions;
+	Question currQuestion;
+	int currQuestionNum;
+	int totalNumQuestions;
+	int numIncorrect;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -69,6 +79,30 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	void setup() {
+		//TODO
+	}
+	
+	void displayAddQuestionForm() {
+		//TODO
+	}
+	
+	void displayQuiz() {
+		//TODO
+	}
+	
+	void displayQuestion() {
+		//TODO
+	}
+	
+	void displaySumbit(QuestionNode node) {
+		//TODO
+	}
+	
+	void displayResults() {
+		//TODO
 	}
 	
 	public static void main(String[] args) {

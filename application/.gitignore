@@ -2,3 +2,7 @@
 /QuestionDatabaseADT.class
 /Question.class
 /Choice.class
+/QuestionDatabase.class
+/QuestionNode.class
+/NodeWrapperADT.class
+/AddQuestionFormNode.class
