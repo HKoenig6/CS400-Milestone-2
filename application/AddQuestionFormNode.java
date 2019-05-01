@@ -24,9 +24,12 @@ public class AddQuestionFormNode {
 	//List<ToggleGroup> choiceGroups;
 	VBox form;
 	File currentPicture;
+	boolean finished =false;
+	Button submit = new Button("Submit Question");
 	
-	public AddQuestionFormNode() {
+	public AddQuestionFormNode(QuestionDatabase database) {
 		final ToggleGroup OPTION_GROUP = new ToggleGroup();
+		
 		try {
 			
 			Label pictureDirectory = new Label();
@@ -94,7 +97,7 @@ public class AddQuestionFormNode {
 			 * Add Picture Button
 			 */
 			
-			Button submit = new Button("Submit Question");
+			
 			Button addPic = new Button("Add Picture");
 			HBox buttons = new HBox();
 			buttons.getChildren().addAll(addPic,submit);
@@ -108,8 +111,7 @@ public class AddQuestionFormNode {
 			Scene scene = new Scene(root, 400, 300);
 			questionPromptWindow.setScene(scene);
 			questionPromptWindow.setTitle("Create Question");
-			questionPromptWindow.show();
-			
+			questionPromptWindow.show();			
 			
 			//Clear textField when clicked first time or start typing in (only done if user tabs into text field)
 			option1Text.setOnMouseClicked(e -> {if(option1Text.getText().equals("Enter Option 1")) option1Text.clear();});
@@ -125,6 +127,7 @@ public class AddQuestionFormNode {
 			
 			//Submit Button Event
 			submit.setOnAction(e -> {
+				finished = true;
 				int correctOption = 0;
 				if(option1Button.isSelected())
 					correctOption = 1;
@@ -147,6 +150,7 @@ public class AddQuestionFormNode {
 				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);
 				System.out.println(finishedQuestion);
 				questionPromptWindow.close();
+				database.addQuestion(finishedQuestion.getTopic(), finishedQuestion);
 				});
 			
 			//addPic button event
@@ -177,11 +181,26 @@ public class AddQuestionFormNode {
 //	}
 //	
 	Question getQuestion() {
+		
 		return finishedQuestion;
 	}
 	
 	String getTopic() {
 		return finishedQuestion.getTopic();
+	}
+	boolean isFinished() {
+		
+		return finished;
+	}
+	boolean finish() {
+		while(!isFinished()) {
+			
+		}
+		return true;
+	}
+	
+	Button getSubmit() {
+		return submit;
 	}
 //	
 //	File getImage() {

@@ -29,7 +29,7 @@ public class Main extends Application {
 	
 	private File input;
 	private File currentPicture;
-	QuestionDatabase questions = new QuestionDatabase();
+	QuestionDatabase questionData = new QuestionDatabase();
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -69,20 +69,16 @@ public class Main extends Application {
 			primaryStage.show();
 			
 			//Opens create Question Dialogue
-			add.setOnAction(e -> {new AddQuestionFormNode();});
+			add.setOnAction(e -> {AddQuestionFormNode questionForm = new AddQuestionFormNode(questionData);
+			});
 			
 			load.setOnAction(e -> {load();});
 			
+			//generate.setOnAction(e -> {new });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	public void createQuestion() {
-		AddQuestionFormNode quest = new AddQuestionFormNode();
-		questions.addQuestion(quest.getTopic(), quest.getQuestion());
-		System.out.println(quest.getQuestion());
 	}
 
 	/**
@@ -93,10 +89,7 @@ public class Main extends Application {
 		choose.getExtensionFilters().addAll(new ExtensionFilter("JSON files (*.json)", "*.json"));
 		choose.setTitle("Select Quiz JSON File");
 		input = choose.showOpenDialog(new Stage());
-		
-		//TODO:
-		//process input
-		//parse JSON file
+		questionData.loadQuestionsFromJSON(input);
 	}
 	
 	public static void main(String[] args) {
