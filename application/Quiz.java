@@ -77,10 +77,8 @@ public class Quiz {
 
 	//displays score of finished quiz
 	private void getScore() {
-		// TODO Auto-generated method stub
-		//add label with score and topic name
-		//add finished button
-		//add padding to scene
+		BorderPane scoreRoot = new BorderPane();
+		
 		
 		Scene scoreScene = new Scene(scoreRoot,400,300);
 		quizWindow.setScene(scoreScene);

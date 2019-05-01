@@ -6,17 +6,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class QuestionDatabase implements QuestionDatabaseADT {
 
 	Map<String, List<Question>> topics;
+	private ArrayList<String> allTopicsList = new ArrayList<String>();
 
 	public QuestionDatabase() {
 		topics = new HashMap<String, List<Question>>();
@@ -24,11 +28,17 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 	}
 	
 	@Override
-	public void addQuestion(String topic, Question question) {
-		List<Question> questionList = topics.get(topic);
-		questionList.add(question);
-		topics.replace(topic, questionList);
-	}
+
+    public void addQuestion(String str, Question question) {
+           if(topics.containsKey(str))
+                  topics.get(str).add(question);
+           else {
+                  List<Question> newList = new ArrayList<Question>();
+                  newList.add(question);
+                  topics.put(str, newList);
+           }
+
+    }
 
 	@Override
 	public void saveQuestionsToFile(File file) {
@@ -37,8 +47,46 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 			json.write("{\n\t\"questionArray\":\n\t[\n");
 			for (String key : topics.keySet()) {
 				List<Question> questionList = topics.get(key);
-				
+				int qCounter = 0;
+				for (Question q : questionList) {
+					qCounter++;
+					int cCounter = 0;
+					json.write("\t\t{\n");
+					json.write("\t\t\t\"meta-data\":\"" + q.getMetadata() + "\",\n");
+					json.write("\t\t\t\"questionText\":\"" + q.getQuestion() + "\",\n");
+					json.write("\t\t\t\"topic\":\"" + q.getTopic() + "\",\n");
+					String img;
+					if (q.getImage() == null) {
+						img = "none";
+					} else {
+						img = q.getImage().getName();
+					}
+					json.write("\t\t\t\"image\":\"" + img + "\",\n");
+					json.write("\t\t\t\"choiceArray\":\n\t\t\t[\n");
+					for (Choice c : q.getChoices()) {
+						cCounter++;
+						String tf;
+						if (c.getIsCorrect()) {
+							tf = "T";
+						} else {
+							tf = "F";
+						}
+						json.write("\t\t\t\t{\"isCorrect\":\"" + tf + "\",\"choice\":\"" + c.getChoice() + "\"}");
+						if (cCounter == q.getChoices().size()) {
+							json.write("\n");
+						} else {
+							json.write(",\n");
+						}						
+					}
+					if (qCounter == questionList.size()) {
+						json.write("\t\t\t],\n\t\t}\n");
+					} else {
+						json.write("\t\t\t],\n\t\t},\n");
+					}					
+				}
+				json.write("\t]\n}");
 			}
+			json.close();
 		} catch (IOException i) {
 			i.printStackTrace();
 			return;
@@ -47,8 +95,7 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 
 	@Override
 	public List<Question> getQuestions(String topic) {
-		// TODO Auto-generated method stub
-		return null;
+		return topics.get(topic);
 	}
 
 	@Override
@@ -57,9 +104,13 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 	}
 
 	@Override
-	public ObservableList<String> getTopics() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+    public ObservableList<String> getTopics() {
+           Set<String> set = topics.keySet();
+           Iterator<String> it = set.iterator();
+           while (it.hasNext())
+                  allTopicsList.add(it.next());
+           ObservableList<String> allTopics = FXCollections.observableArrayList(allTopicsList);
+           return allTopics;
+    }
 }
