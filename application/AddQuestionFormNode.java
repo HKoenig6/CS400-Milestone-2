@@ -79,10 +79,16 @@ public class AddQuestionFormNode {
 			HBox option4 = new HBox();
 			option4.getChildren().addAll(option4Button,option4Text);
 			
+			RadioButton option5Button = new RadioButton("5.  ");
+			option5Button.setToggleGroup(OPTION_GROUP);
+			TextField option5Text = new TextField("Enter Option 5");
+			HBox option5 = new HBox();
+			option5.getChildren().addAll(option5Button,option5Text);
+			
 			VBox options = new VBox();
-			options.getChildren().addAll(new Label(),optionPrompt,new Label(),option1 , option2, option3,option4);
+			options.getChildren().addAll(new Label(),optionPrompt,new Label(),option1 , option2, option3, option4, option5);
 			
-			
+			option1Button.setSelected(true);
 			/**
 			 * Submit Button
 			 * Add Picture Button
@@ -114,6 +120,8 @@ public class AddQuestionFormNode {
 			option3Text.setOnKeyPressed(e -> {if(option3Text.getText().equals("Enter Option 3")) option3Text.clear();});
 			option4Text.setOnMouseClicked(e -> {if(option4Text.getText().equals("Enter Option 4")) option4Text.clear();});
 			option4Text.setOnKeyPressed(e -> {if(option4Text.getText().equals("Enter Option 4")) option4Text.clear();});
+			option5Text.setOnMouseClicked(e -> {if(option5Text.getText().equals("Enter Option 5")) option5Text.clear();});
+			option5Text.setOnKeyPressed(e -> {if(option5Text.getText().equals("Enter Option 5")) option5Text.clear();});
 			
 			//Submit Button Event
 			submit.setOnAction(e -> {
@@ -126,12 +134,15 @@ public class AddQuestionFormNode {
 					correctOption = 3;
 				else if(option4Button.isSelected())
 					correctOption = 4;
+				else if(option5Button.isSelected())
+					correctOption = 5;
 				
 				choices = new ArrayList<Choice>();
 				choices.add(new Choice(correctOption == 1, option1Text.getText()));
 				choices.add(new Choice(correctOption == 2, option2Text.getText()));
 				choices.add(new Choice(correctOption == 3, option3Text.getText()));
 				choices.add(new Choice(correctOption == 4, option4Text.getText()));
+				choices.add(new Choice(correctOption == 5, option5Text.getText()));
 				
 				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);
 				System.out.println(finishedQuestion);
