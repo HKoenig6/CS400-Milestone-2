@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 public class QuestionDatabase implements QuestionDatabaseADT {
 
 	Map<String, List<Question>> topics;
+	private ArrayList<String> allTopicsList = new ArrayList<String>();
 
 	public QuestionDatabase() {
 		topics = new HashMap<String, List<Question>>();
