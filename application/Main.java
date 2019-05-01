@@ -1,6 +1,9 @@
 package application;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.filechooser.FileFilter;
@@ -82,17 +85,26 @@ public class Main extends Application {
 				choices.add(new Choice(false,"wrong"));
 				choices.add(new Choice(true,"correct"));
 				choices.add(new Choice(false,"wrong"));
-				Question question = new Question("", "What is question?","Science",new File("C:/Users/Matthew Beyer/Pictures/2929857.jpg"),choices);
+				Question question = new Question("", "What is question?","Science",new File("2929857.jpg"),choices);
 				questionData.addQuestion("Math", question);
 				String topic = (String)comboBox.getValue();
 				if(topic == null) {
 					
 				}else {
-					Quiz quiz = new Quiz(questionData, topic, primaryStage);
+					Quiz quiz = new Quiz(questionData, topic, primaryStage,numQuestions);
 				}
-					
-				//primaryStage.setScene(quiz.getScene());
-				//primaryStage.setTitle("Quiz");
+				});
+			
+			
+				save.setOnAction(e -> {
+					FileChooser choose = new FileChooser();
+					choose.getExtensionFilters().addAll(new ExtensionFilter("Text File (*.txt)", "*.txt"));
+					choose.setTitle("Select Save Location");
+					try {
+						questionData.saveQuestionsToFile(choose.showSaveDialog(new Stage()));
+					}catch(Exception ex) {
+						
+					}
 				});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,7 +120,11 @@ public class Main extends Application {
 		choose.getExtensionFilters().addAll(new ExtensionFilter("JSON files (*.json)", "*.json"));
 		choose.setTitle("Select Quiz JSON File");
 		input = choose.showOpenDialog(new Stage());
-		questionData.loadQuestionsFromJSON(input);
+		try {
+			questionData.loadQuestionsFromJSON(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public static void main(String[] args) {
 		

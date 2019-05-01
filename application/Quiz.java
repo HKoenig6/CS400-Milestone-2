@@ -2,12 +2,14 @@ package application;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,10 +48,31 @@ public class Quiz {
 	
 	
 	
-	public Quiz(QuestionDatabase data, String topic,Stage primaryStage) {
+	public Quiz(QuestionDatabase data, String topic,Stage primaryStage,TextField size) {
 		this.topic = topic;
 		primaryStage.close();
-		questions = (ArrayList<Question>) data.getQuestions(topic);
+		
+		questions = new ArrayList<Question>();
+		
+		ArrayList<Question> existingQuestions = (ArrayList<Question>) data.getQuestions(topic);
+		Random rnd = new Random();
+		ArrayList<Integer> chosen = new ArrayList<Integer>();
+		int qnum = Integer.parseInt(size.getText());	
+		if(qnum >= existingQuestions.size()) {
+			questions = existingQuestions;
+		}else {
+			for(qnum = Integer.parseInt(size.getText());qnum>0;qnum--) {
+				int next = rnd.nextInt(existingQuestions.size()-1);
+				if(chosen.contains(next)) {
+					qnum--;
+				}else {
+					questions.add(existingQuestions.get(next));
+				}
+			}
+		}
+		if(questions.size() == 1)
+			next.setDisable(true);
+		
 		initializeWindow();
 		
 		quizWindow.setOnCloseRequest(e ->{primaryStage.show();});
@@ -59,6 +82,21 @@ public class Quiz {
 			quizWindow.close();
 		});
 		submit.setOnAction(e -> {
+			String userAnswer = "";
+			String answer = questions.get(questionNumber).getAnswer();
+			if(option1.isSelected())
+				userAnswer = option1.getText();
+			else if(option2.isSelected())
+				userAnswer = option2.getText();
+			else if(option3.isSelected())
+				userAnswer = option3.getText();
+			else if(option4.isSelected())
+				userAnswer = option4.getText();
+			else if(option5.isSelected())
+				userAnswer = option5.getText();
+			
+			if(userAnswer.equals(answer))
+				numCorrect++;
 			//Submit Quiz, get score
 			getScore();
 		});
@@ -82,8 +120,9 @@ public class Quiz {
 			questionNumber++;
 			if((questionNumber + 1)>=questions.size()) {
 				next.setDisable(true);
+			}else {
+				showNextQuestion();
 			}
-			showNextQuestion();
 			//TODO increment questionNumber if possible
 		});
 	}

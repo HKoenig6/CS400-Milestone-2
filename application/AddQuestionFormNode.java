@@ -149,10 +149,8 @@ public class AddQuestionFormNode {
 				choices.add(new Choice(correctOption == 4, option4Text.getText()));
 				choices.add(new Choice(correctOption == 5, option5Text.getText()));
 				
-				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);
-				System.out.println(finishedQuestion);
+				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);	
 				database.addQuestion(finishedQuestion.getTopic(), finishedQuestion);
-				System.out.println(database.getTopics());
 				questionPromptWindow.close();
 				});
 			

@@ -1,6 +1,7 @@
 package application;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +23,6 @@ import javafx.collections.ObservableList;
 public class QuestionDatabase implements QuestionDatabaseADT {
 
 	Map<String, List<Question>> topics;
-	private ArrayList<String> allTopicsList = new ArrayList<String>();
 
 	public QuestionDatabase() {
 		topics = new HashMap<String, List<Question>>();
@@ -99,9 +101,33 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 	}
 
 	@Override
-	public void loadQuestionsFromJSON(File file) {
-		
-	}
+    public void loadQuestionsFromJSON(File file) throws FileNotFoundException, IOException, ParseException {
+           Object obj = new JSONParser().parse(new FileReader(file));
+           JSONObject jo = (JSONObject) obj;
+           JSONArray question = (JSONArray) jo.get("questionArray");
+           for (int i = 0; i < question.size(); i++) {
+                  JSONObject jsonPackage = (JSONObject) question.get(i);
+                  String metadata = (String) jsonPackage.get("meta-data");
+                  String questions = (String) jsonPackage.get("questionText");
+                  String topic = (String) jsonPackage.get("topic");
+                  File image = new File((String) jsonPackage.get("image"));
+                  if(image.getName().equals("none"))
+                        image = null;
+                  JSONArray choiceArray = (JSONArray) jsonPackage.get("choiceArray");
+                  List<Choice> choices = new ArrayList<Choice>();
+                  for (int j = 0; j < choiceArray.size(); j++) {
+                        JSONObject jsonArray = (JSONObject) choiceArray.get(j);
+                        String isCorrect = (String) jsonArray.get("isCorrect");
+                        String choice = (String) jsonArray.get("choice");
+                        if (isCorrect.equals("T")) {
+                               choices.add(new Choice(true, choice));
+                        } else {
+                               choices.add(new Choice(false, choice));
+                        }
+                  }
+                  addQuestion(topic, new Question(metadata, questions, topic, image, choices));
+           }
+    }
 
 	@Override
 
