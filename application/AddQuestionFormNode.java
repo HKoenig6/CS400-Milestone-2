@@ -25,7 +25,6 @@ public class AddQuestionFormNode {
 	VBox form;
 	File currentPicture;
 	boolean finished =false;
-	Button submit = new Button("Submit Question");
 	
 	public AddQuestionFormNode(QuestionDatabase database) {
 		final ToggleGroup OPTION_GROUP = new ToggleGroup();
@@ -99,8 +98,10 @@ public class AddQuestionFormNode {
 			
 			
 			Button addPic = new Button("Add Picture");
+			Button submit = new Button("Submit Question");
+			Button cancel = new Button("Cancel");
 			HBox buttons = new HBox();
-			buttons.getChildren().addAll(addPic,submit);
+			buttons.getChildren().addAll(addPic,submit,new Label(),cancel);
 			
 			Stage questionPromptWindow = new Stage();
 			BorderPane root = new BorderPane();
@@ -163,8 +164,12 @@ public class AddQuestionFormNode {
 				pictureDirectory.setText("Picture: " + currentPicture.toString());
 				}
 				catch(Exception ex) {
-					
 				}
+			});
+			
+			//cancel button event
+			cancel.setOnAction(e -> {
+				questionPromptWindow.close();
 			});
 			
 		} catch (Exception e) {
@@ -197,10 +202,6 @@ public class AddQuestionFormNode {
 			
 		}
 		return true;
-	}
-	
-	Button getSubmit() {
-		return submit;
 	}
 //	
 //	File getImage() {

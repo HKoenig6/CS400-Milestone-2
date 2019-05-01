@@ -69,12 +69,15 @@ public class Main extends Application {
 			primaryStage.show();
 			
 			//Opens create Question Dialogue
-			add.setOnAction(e -> {AddQuestionFormNode questionForm = new AddQuestionFormNode(questionData);
+			add.setOnAction(e -> {new AddQuestionFormNode(questionData);
 			});
 			
 			load.setOnAction(e -> {load();});
 			
-			//generate.setOnAction(e -> {new });
+			generate.setOnAction(e -> {Quiz quiz = new Quiz(questionData, "default", primaryStage);
+				//primaryStage.setScene(quiz.getScene());
+				//primaryStage.setTitle("Quiz");
+				});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -91,7 +94,6 @@ public class Main extends Application {
 		input = choose.showOpenDialog(new Stage());
 		questionData.loadQuestionsFromJSON(input);
 	}
-	
 	public static void main(String[] args) {
 		launch(args);
 	}
