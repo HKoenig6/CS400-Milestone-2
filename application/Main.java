@@ -46,8 +46,8 @@ public class Main extends Application {
 
 			Label questions = new Label("Number of Questions: N/A");
 			Label topicPrompt = new Label("Select Topic Below");
-			ObservableList<String> options = FXCollections.observableArrayList("Math", "Computer Science", "Statistics",
-					"Phsics", "History", "English");
+			ObservableList<String> options = questionData.getTopics();
+			
 			final ComboBox comboBox = new ComboBox(options);
 			VBox topicSelection = new VBox();
 			
@@ -68,13 +68,29 @@ public class Main extends Application {
 			primaryStage.setTitle("Quiz Generator");
 			primaryStage.show();
 			
+			comboBox.setOnMouseClicked(e -> {comboBox.setItems(questionData.getTopics());});
 			//Opens create Question Dialogue
 			add.setOnAction(e -> {new AddQuestionFormNode(questionData);
 			});
 			
 			load.setOnAction(e -> {load();});
 			
-			generate.setOnAction(e -> {Quiz quiz = new Quiz(questionData, "default", primaryStage);
+			generate.setOnAction(e -> {				
+				ArrayList<Choice> choices = new ArrayList<Choice>();
+				choices.add(new Choice(false,"wrong"));
+				choices.add(new Choice(false,"wrong"));
+				choices.add(new Choice(false,"wrong"));
+				choices.add(new Choice(true,"correct"));
+				choices.add(new Choice(false,"wrong"));
+				Question question = new Question("", "What is question?","Science",new File("C:/Users/Matthew Beyer/Pictures/2929857.jpg"),choices);
+				questionData.addQuestion("Math", question);
+				String topic = (String)comboBox.getValue();
+				if(topic == null) {
+					
+				}else {
+					Quiz quiz = new Quiz(questionData, topic, primaryStage);
+				}
+					
 				//primaryStage.setScene(quiz.getScene());
 				//primaryStage.setTitle("Quiz");
 				});
@@ -95,6 +111,7 @@ public class Main extends Application {
 		questionData.loadQuestionsFromJSON(input);
 	}
 	public static void main(String[] args) {
+		
 		launch(args);
 	}
 }

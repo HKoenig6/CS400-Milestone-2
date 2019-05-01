@@ -25,10 +25,11 @@ public class AddQuestionFormNode {
 	VBox form;
 	File currentPicture;
 	boolean finished =false;
+	//QuestionDatabase database;
 	
 	public AddQuestionFormNode(QuestionDatabase database) {
 		final ToggleGroup OPTION_GROUP = new ToggleGroup();
-		
+		//this.database = newDatabase;
 		try {
 			
 			Label pictureDirectory = new Label();
@@ -150,8 +151,9 @@ public class AddQuestionFormNode {
 				
 				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);
 				System.out.println(finishedQuestion);
-				questionPromptWindow.close();
 				database.addQuestion(finishedQuestion.getTopic(), finishedQuestion);
+				System.out.println(database.getTopics());
+				questionPromptWindow.close();
 				});
 			
 			//addPic button event
@@ -203,6 +205,9 @@ public class AddQuestionFormNode {
 		}
 		return true;
 	}
+//	QuestionDatabase getData() {
+//		return database;
+//	}
 //	
 //	File getImage() {
 //		return currentPicture;
