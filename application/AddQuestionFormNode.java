@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -21,13 +23,17 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class AddQuestionFormNode {
 	List<Choice> choices;
 	Question finishedQuestion;
+	QuestionDatabase questionData;
+	File input;
 	//List<ToggleGroup> choiceGroups;
 	VBox form;
 	File currentPicture;
 	boolean finished =false;
 	//QuestionDatabase database;
 	
-	public AddQuestionFormNode(QuestionDatabase database) {
+	public AddQuestionFormNode(QuestionDatabase database, Stage primaryStage, File input) {
+		this.input = input;
+		this.questionData = database;
 		final ToggleGroup OPTION_GROUP = new ToggleGroup();
 		//this.database = newDatabase;
 		try {
@@ -149,9 +155,13 @@ public class AddQuestionFormNode {
 				choices.add(new Choice(correctOption == 4, option4Text.getText()));
 				choices.add(new Choice(correctOption == 5, option5Text.getText()));
 				
+				if (currentPicture == null) {
+					currentPicture = new File("none");
+				}
 				finishedQuestion = new Question("1",questionText.getText(),topicText.getText(),currentPicture,choices);	
 				database.addQuestion(finishedQuestion.getTopic(), finishedQuestion);
 				questionPromptWindow.close();
+				build(primaryStage);
 				});
 			
 			//addPic button event
@@ -171,7 +181,6 @@ public class AddQuestionFormNode {
 			cancel.setOnAction(e -> {
 				questionPromptWindow.close();
 			});
-			
 		} catch (Exception e) {
 		}
 	}
@@ -203,6 +212,93 @@ public class AddQuestionFormNode {
 		}
 		return true;
 	}
+	
+	private void load(Stage primaryStage) {
+		FileChooser choose = new FileChooser();
+		choose.getExtensionFilters().addAll(new ExtensionFilter("JSON files (*.json)", "*.json"));
+		choose.setTitle("Select Quiz JSON File");
+		input = choose.showOpenDialog(new Stage());
+		try {
+			questionData.loadQuestionsFromJSON(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		build(primaryStage);
+	}
+	
+	public void build(Stage primaryStage) {
+		Button load = new Button("Load Quiz");
+		Button add = new Button("Add Question");
+		Button save = new Button("Save to File");
+		Button generate = new Button("Generate Quiz");
+		HBox buttons = new HBox();
+
+		TextField numQuestions = new TextField();
+		Label numQuestionsPrompt = new Label("Enter Number of Questions");
+		VBox textField = new VBox();
+		
+		ObservableList<String> topics = questionData.getTopics();
+		ArrayList<Question> allQuestions = new ArrayList<Question>();
+		for (String s : topics) {
+			List<Question> tQuestions = questionData.getQuestions(s);
+			for (Question q : tQuestions) {
+				allQuestions.add(q);
+			}
+		}
+		
+		
+		Label questions = new Label("Number of Questions: " + allQuestions.size());
+		Label topicPrompt = new Label("Select Topic Below");
+		ObservableList<String> options = questionData.getTopics();
+		
+		final ComboBox comboBox = new ComboBox(options);
+		VBox topicSelection = new VBox();
+		
+		
+		textField.getChildren().addAll(numQuestionsPrompt,numQuestions);
+		buttons.getChildren().addAll(load, add, save, generate);
+		topicSelection.getChildren().addAll(questions, topicPrompt, comboBox);
+
+		BorderPane root = new BorderPane();
+		root.setPadding(new Insets(10));
+		root.setLeft(topicSelection);
+		root.setBottom(buttons);
+		root.setRight(textField);
+		Scene scene = new Scene(root, 400, 300);
+
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		primaryStage.setScene(scene);
+		primaryStage.setTitle("Quiz Generator");
+		primaryStage.show();
+		
+		comboBox.setOnMouseClicked(e -> {comboBox.setItems(questionData.getTopics());});
+		//Opens create Question Dialogue
+		add.setOnAction(e -> {new AddQuestionFormNode(questionData, primaryStage, input);
+		});
+		
+		load.setOnAction(e -> {load(primaryStage);});
+		
+		generate.setOnAction(e -> {				
+			String topic = (String)comboBox.getValue();
+			if(topic == null) {
+				
+			}else {
+				Quiz quiz = new Quiz(questionData, topic, primaryStage, numQuestions);
+			}
+			});		
+		
+			save.setOnAction(e -> {
+				FileChooser choose = new FileChooser();
+				choose.getExtensionFilters().addAll(new ExtensionFilter("Text File (*.txt)", "*.txt"));
+				choose.setTitle("Select Save Location");
+				try {
+					questionData.saveQuestionsToFile(choose.showSaveDialog(new Stage()));
+				}catch(Exception ex) {
+					
+				}
+			});
+	}
+	
 //	QuestionDatabase getData() {
 //		return database;
 //	}

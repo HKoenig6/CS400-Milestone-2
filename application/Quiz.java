@@ -1,12 +1,16 @@
 package application;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -17,7 +21,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class Quiz {
 	private QuestionDatabase questionData;
@@ -57,14 +63,20 @@ public class Quiz {
 		ArrayList<Question> existingQuestions = (ArrayList<Question>) data.getQuestions(topic);
 		Random rnd = new Random();
 		ArrayList<Integer> chosen = new ArrayList<Integer>();
-		int qnum = Integer.parseInt(size.getText());	
+		int qnum;
+		if (size.getText().equals("")) {
+			qnum = existingQuestions.size();
+		} else {
+			qnum = Integer.parseInt(size.getText());	
+		}
+		
 		if(qnum >= existingQuestions.size()) {
 			questions = existingQuestions;
 		}else {
 			for(qnum = Integer.parseInt(size.getText());qnum>0;qnum--) {
 				int next = rnd.nextInt(existingQuestions.size()-1);
 				if(chosen.contains(next)) {
-					qnum--;
+					qnum++;
 				}else {
 					questions.add(existingQuestions.get(next));
 				}
@@ -118,11 +130,12 @@ public class Quiz {
 			if(userAnswer.equals(answer))
 				numCorrect++;
 			questionNumber++;
-			if((questionNumber + 1)>=questions.size()) {
+			boolean isLast = false;
+			if((questionNumber + 1) >= questions.size()) {
 				next.setDisable(true);
-			}else {
-				showNextQuestion();
+				isLast = true;
 			}
+			showNextQuestion(isLast);
 			//TODO increment questionNumber if possible
 		});
 	}
@@ -132,7 +145,17 @@ public class Quiz {
 		BorderPane scoreRoot = new BorderPane();
 		Label finishedLbl = new Label("               Quiz Complete!");
 		finishedLbl.setFont(new Font(24));
-		Label yourScore = new Label("Your Score:\n       " + numCorrect + "/" + questions.size());
+		
+		Label yourScore;
+		//formatting condition (100% vs. any number lower)
+		if ((numCorrect / questions.size()) == 1) {
+			yourScore = new Label("Your Score:\n       " + numCorrect + "/" + questions.size()  + "\n      " 
+					+ ((double)numCorrect / (double)questions.size() * 100) + "%");
+		} else {
+			yourScore = new Label("Your Score:\n       " + numCorrect + "/" + questions.size()  + "\n       " 
+					+ ((double)numCorrect / (double)questions.size() * 100) + "%");
+		}
+		
 		yourScore.setFont(new Font(18));
 		yourScore.setPadding(new Insets(10));
 		Label padding = new Label("");
@@ -174,22 +197,38 @@ public class Quiz {
 		
 		
 		start.setOnAction(e -> {
-			showNextQuestion();
+			showNextQuestion(false);
 		});
 	}
 	
-	private void showNextQuestion() {
+	private void showNextQuestion(boolean isLast) {
+		if (isLast) {
+			next.setDisable(true);
+		}
 		questionText.setText(questions.get(questionNumber).getQuestion());
 		ArrayList<Choice> choices = (ArrayList<Choice>)questions.get(questionNumber).getChoices();
-		Image image = new Image(questions.get(questionNumber).getImage().toURI().toString());
-		imageView.setImage(image);
-		imageView.setFitHeight(100);
-		imageView.setFitWidth(100);
-		option1.setText(choices.get(0).getChoice());
-		option2.setText(choices.get(1).getChoice());
-		option3.setText(choices.get(2).getChoice());
-		option4.setText(choices.get(3).getChoice());
-		option5.setText(choices.get(4).getChoice());
+		String img = questions.get(questionNumber).getImage().getName();
+		Image image;
+		if (!img.equals("none")) {
+			image = new Image(questions.get(questionNumber).getImage().getName());
+			imageView.setImage(image);
+			imageView.setFitHeight(100);
+			imageView.setFitWidth(100);
+		}
+		
+		
+		switch (choices.size()) {
+			case 5: 
+				option5.setText(choices.get(4).getChoice());
+			case 4:
+				option4.setText(choices.get(3).getChoice());
+			case 3:
+				option3.setText(choices.get(2).getChoice());
+			case 2:
+				option2.setText(choices.get(1).getChoice());
+			case 1:
+				option1.setText(choices.get(0).getChoice());
+		}
 		BorderPane root = new BorderPane();
 		root.setBottom(buttons);
 		root.setCenter(options);
@@ -201,10 +240,7 @@ public class Quiz {
 		quizWindow.setScene(scene);
 	}
 	
-	
 	public Scene getScene() {
 		return scene;
 	}
-	
-
 }

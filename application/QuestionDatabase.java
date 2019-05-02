@@ -57,29 +57,32 @@ public class QuestionDatabase implements QuestionDatabaseADT {
 					json.write("\t\t\t\"meta-data\":\"" + q.getMetadata() + "\",\n");
 					json.write("\t\t\t\"questionText\":\"" + q.getQuestion() + "\",\n");
 					json.write("\t\t\t\"topic\":\"" + q.getTopic() + "\",\n");
-					String img;
-					if (q.getImage() == null) {
-						img = "none";
-					} else {
-						img = q.getImage().getName();
-					}
-					json.write("\t\t\t\"image\":\"" + img + "\",\n");
+
+					
+					json.write("\t\t\t\"image\":\"" + q.getImage().getName() + "\",\n");
 					json.write("\t\t\t\"choiceArray\":\n\t\t\t[\n");
+					int cIndex = 0;
 					for (Choice c : q.getChoices()) {
+						if (!c.getChoice().equals("")) {
+							cIndex++;
+						}
+					}
+					for (int i = 0; i < cIndex; i++) {
 						cCounter++;
 						String tf;
-						if (c.getIsCorrect()) {
+						if (q.getChoices().get(i).getIsCorrect()) {
 							tf = "T";
 						} else {
 							tf = "F";
 						}
-						json.write("\t\t\t\t{\"isCorrect\":\"" + tf + "\",\"choice\":\"" + c.getChoice() + "\"}");
-						if (cCounter == q.getChoices().size()) {
+						json.write("\t\t\t\t{\"isCorrect\":\"" + tf + "\",\"choice\":\"" + q.getChoices().get(i).getChoice() + "\"}");
+						if (cCounter == cIndex) {
 							json.write("\n");
 						} else {
 							json.write(",\n");
 						}						
 					}
+					
 					if (qCounter == questionList.size()) {
 						json.write("\t\t\t],\n\t\t}\n");
 					} else {
@@ -111,8 +114,6 @@ public class QuestionDatabase implements QuestionDatabaseADT {
                   String questions = (String) jsonPackage.get("questionText");
                   String topic = (String) jsonPackage.get("topic");
                   File image = new File((String) jsonPackage.get("image"));
-                  if(image.getName().equals("none"))
-                        image = null;
                   JSONArray choiceArray = (JSONArray) jsonPackage.get("choiceArray");
                   List<Choice> choices = new ArrayList<Choice>();
                   for (int j = 0; j < choiceArray.size(); j++) {

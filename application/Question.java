@@ -57,7 +57,7 @@ public class Question {
 		out += "\nOption 3: " + choices.get(2).getChoice();;
 		out += "\nOption 4: " + choices.get(3).getChoice();;
 		out += "\nCorrect Option: " + answer;
-		out += "\nPicture Directory: " + image.toString();
+		out += "\nPicture Directory: " + image.getName().toString();
 		return out;
 	}
 }
